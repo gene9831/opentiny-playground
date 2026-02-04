@@ -45,7 +45,6 @@
           <div class="loader-text">正在加载...</div>
         </div>
         <iframe
-          ref="iframeRef"
           :src="linkUrl"
           width="100%"
           height="100%"
@@ -53,7 +52,7 @@
           title="Example Website"
           loading="lazy"
           sandbox="allow-same-origin allow-scripts"
-          @load="onIframeLoad"
+          onload="this.previousElementSibling.previousElementSibling.checked = false"
         ></iframe>
       </label>
     </div>
@@ -188,7 +187,6 @@ function isOriginAllowed(origin: string): boolean {
 const { site, isDark } = useData();
 const route = useRoute();
 const showModal = ref(false);
-const iframeRef = ref<HTMLIFrameElement | null>(null);
 
 const backHome = ref('/');
 backHome.value = site.value.base;
@@ -288,7 +286,7 @@ watch(
   { deep: true, immediate: true }
 );
 
-// --- postMessage: iframe <-> parent ---
+// --- postMessage: iframe -> parent ---
 
 function handleMessage(event: MessageEvent) {
   if (!isOriginAllowed(event.origin)) return;
@@ -301,26 +299,6 @@ function handleMessage(event: MessageEvent) {
       hash;
     history.replaceState(null, "", url);
   }
-}
-
-/** Post a message to the iframe. Only call when iframe has loaded and same-origin or allowed. */
-function postToIframe(message: unknown, targetOrigin = "*") {
-  const iframe = iframeRef.value;
-  if (!iframe?.contentWindow) return;
-  const origin =
-    targetOrigin === "*" ? new URL(linkUrl.value).origin : targetOrigin;
-  iframe.contentWindow.postMessage(message, origin);
-}
-
-/** Called when iframe has loaded: hide loader and send current parent URL to iframe. */
-function onIframeLoad(event: Event) {
-  const iframe = event.target as HTMLIFrameElement;
-  const checkbox = iframe?.previousElementSibling?.previousElementSibling as HTMLInputElement | undefined;
-  if (checkbox) checkbox.checked = false;
-  postToIframe(
-    { type: "playground-parent-url", url: window.location.href },
-    "*"
-  );
 }
 
 onMounted(() => {
