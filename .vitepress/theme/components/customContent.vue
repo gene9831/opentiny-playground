@@ -52,6 +52,7 @@
           title="Example Website"
           loading="lazy"
           sandbox="allow-same-origin allow-scripts"
+          allow="clipboard-write"
           onload="this.previousElementSibling.previousElementSibling.checked = false"
         ></iframe>
       </label>
@@ -273,7 +274,7 @@ watch(
       linkUrl.value = "https://opentiny.design/tiny-engine#/tiny-engine-editor";
       title = "TinyEngine";
     } else if (route.path.includes("/tiny-robot")) {
-      linkUrl.value = `https://res-static.opentiny.design/tiny-robot-playground/latest/index.html${window.location.hash || ""}`;
+      linkUrl.value = `http://localhost:5184/playground${window.location.hash || ""}`;
       title = "TinyRobot";
     } else if (route.path.includes("/next-sdk")) {
       linkUrl.value = "https://ai.opentiny.design/next-sdk-playground";
