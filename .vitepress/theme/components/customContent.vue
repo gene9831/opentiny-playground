@@ -274,7 +274,9 @@ watch(
       linkUrl.value = "https://opentiny.design/tiny-engine#/tiny-engine-editor";
       title = "TinyEngine";
     } else if (route.path.includes("/tiny-robot")) {
-      linkUrl.value = `https://res-static.opentiny.design/tiny-robot-playground/latest/index.html${window.location.hash || ""}`;
+      // Guard for SSR: window is undefined during VitePress build
+      const hash = typeof window !== "undefined" ? window.location.hash || "" : "";
+      linkUrl.value = `https://res-static.opentiny.design/tiny-robot-playground/latest/index.html${hash}`;
       title = "TinyRobot";
     } else if (route.path.includes("/next-sdk")) {
       linkUrl.value = "https://ai.opentiny.design/next-sdk-playground";
